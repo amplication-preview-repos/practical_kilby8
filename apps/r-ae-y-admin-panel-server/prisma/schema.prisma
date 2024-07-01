@@ -1,0 +1,58 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  password  String?
+  updatedAt DateTime @updatedAt
+  username  String?
+}
+
+model Role {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  name        String?
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+model License {
+  createdAt  DateTime             @default(now())
+  expiryDate DateTime?
+  id         String               @id @default(cuid())
+  modules    EnumLicenseModules[]
+  updatedAt  DateTime             @updatedAt
+  users      User[]
+}
+
+model User {
+  canDownload      Boolean?
+  canDownloadFiles Boolean?
+  createdAt        DateTime @default(now())
+  email            String?  @unique
+  firstName        String?
+  id               String   @id @default(cuid())
+  lastName         String?
+  license          License? @relation(fields: [licenseId], references: [id])
+  licenseId        String?
+  licenseRelation  String?
+  password         String
+  role             Role?    @relation(fields: [roleId], references: [id])
+  roleId           String?
+  roleRelation     String?
+  roles            Json
+  updatedAt        DateTime @updatedAt
+  username         String   @unique
+}
+
+enum EnumLicenseModules {
+  Option1
+}
